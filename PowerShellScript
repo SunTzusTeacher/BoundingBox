@@ -23,23 +23,33 @@ function CalculateDistance($coord1, $coord2) {
 function GetCoordinates($geometry) {
     switch ($geometry.type) {
         'Point' {
-            $geometry.coordinates
+             $geometry.coordinates 
         }
         'LineString', 'MultiPoint' {
             $geometry.coordinates
         }
         'Polygon', 'MultiLineString' {
-            $geometry.coordinates | ForEach-Object { $_ }
+            $geometry.coordinates | ForEach-Object {
+                $_ | ForEach-Object {
+                    $_
+                }
+            }
         }
         'MultiPolygon' {
-            $geometry.coordinates | ForEach-Object { $_ | ForEach-Object { $_ } }
+            $geometry.coordinates | ForEach-Object {
+                $_ | ForEach-Object {
+                    $_ | ForEach-Object {
+                        $_ 
+                    } 
+                } 
+            } 
         }
         'GeometryCollection' {
             $geometry.geometries | ForEach-Object {
-                GetCoordinates $_
+                GetCoordinates $_ 
             }
-        } 
-        default {
+        }
+        default { 
             Write-Warning "Unsupported geometry type: $($geometry.type)"
         }
     }
@@ -54,7 +64,7 @@ function GroupCoordinates($coordinates, $distanceThreshold) {
 
         foreach ($group in $groups) {
             foreach ($existingCoord in $group) {
-                if (CalculateDistance $coord $existingCoord -le $distanceThreshold) {
+                if ((CalculateDistance $coord $existingCoord) -le $distanceThreshold) {
                     $group += $coord
                     $grouped = $true
                     break
@@ -81,19 +91,13 @@ foreach ($feature in $jsonObject.features) {
             $allCoordinates += $geometry.coordinates
         }
         'LineString', 'MultiPoint' {
-            $allCoordinates += $geometry.coordinates
+             $allCoordinates += $geometry.coordinates
         }
-        'Polygon', 'MultiLineString' {
-            $allCoordinates += GetCoordinates $geometry
+        'Polygon', 'MultiLineString', 'MultiPolygon', 'GeometryCollection' {
+            $allCoordinates += GetCoordinates $geometry 
         }
-        'MultiPolygon' {
-            $allCoordinates += GetCoordinates $geometry
-        }
-        'GeometryCollection' {
-            $allCoordinates += GetCoordinates $geometry
-        }
-        default {
-            Write-Warning "Unsupported geometry type: $($geometry.type)"
+        default { 
+            Write-Warning "Unsupported geometry type: $($geometry.type)" 
         }
     }
 }
