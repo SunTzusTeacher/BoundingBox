@@ -2,5 +2,5 @@
 
 ---
 ## BoundingBox
-Using opensource API https://overpass-turbo.eu/ I utlized it to buiild a query for for service yards. Then I needed to manipulate the data from the export to make Geofences for North America.
+Using opensource API https://overpass-turbo.eu/ I was able to pull about 140 MB of GEOJSON data. Needed to develop a script to manipulate the data from the api to provide usable geofence cordinates for all of North America. 
 ---
