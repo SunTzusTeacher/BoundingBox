@@ -5,7 +5,7 @@ from geopy.distance import geodesic
 
 input_file = "export.geojson"
 output_file = "output.txt"
-threshold = 0.0005  # Adjust the threshold as needed
+threshold = 0.005  # Adjust the threshold as needed
 
 # Load GeoJSON data
 with open(input_file, "r") as file:
